@@ -1,11 +1,18 @@
-import NoteForm from "./components/NoteForm";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import EditNotePage from "./pages/EditNotePage";
+import NoteDetailPage from "./pages/NoteDetailPage";
+import NotesPage from "./pages/NotesPage";
 
-function App() {
+export default function App() {
   return (
-    <>
-      <NoteForm />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/notes" replace />} />
+        <Route path="/notes" element={<NotesPage />} />
+        <Route path="/notes/new" element={<EditNotePage />} />
+        <Route path="/notes/:id" element={<NoteDetailPage />} />
+        <Route path="/notes/:id/edit" element={<EditNotePage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
