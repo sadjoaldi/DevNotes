@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { notesApi } from "../api/notes";
 import TagBadge from "../components/TagBadge";
+import { useToast } from "../context/ToastContext";
 import type { Note } from "../types";
 
 export default function NoteDetailPage() {
@@ -9,6 +10,7 @@ export default function NoteDetailPage() {
   const [note, setNote] = useState<Note | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -17,7 +19,7 @@ export default function NoteDetailPage() {
         const data = await notesApi.getById(id);
         setNote(data);
       } catch (error) {
-        console.error(error);
+        showToast("Erreur lors du chargement de la note", "error");
         navigate("/");
       } finally {
         setIsLoading(false);
@@ -31,9 +33,10 @@ export default function NoteDetailPage() {
     if (!id || !confirm("Supprimer cette note ?")) return;
     try {
       await notesApi.delete(id);
+      showToast("Note supprimée avec succès.", "success");
       navigate("/");
     } catch (error) {
-      console.error(error);
+      showToast("Erreur lors de la suppression de la note", "error");
     }
   };
 

@@ -3,21 +3,26 @@ import { useNavigate } from "react-router-dom";
 import { notesApi } from "../api/notes";
 import NoteCard from "../components/NoteCard";
 import SearchBar from "../components/SearchBar";
+import TagBadge from "../components/TagBadge";
+import { useToast } from "../context/ToastContext";
 import type { Note } from "../types";
 
 export default function NotesPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         const data = await notesApi.getAll();
         setNotes(data);
-      } catch (error) {
-        console.error(error);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_) {
+        showToast("Erreur lors du chargement des notes", "error");
       } finally {
         setIsLoading(false);
       }
@@ -26,13 +31,19 @@ export default function NotesPage() {
     fetchNotes();
   }, []);
 
-  const filtered = notes.filter(
-    (note) =>
+  const filtered = notes.filter((note) => {
+    const matchesSearch =
       note.title.toLowerCase().includes(search.toLowerCase()) ||
       note.tags.some((tag) =>
         tag.name.toLowerCase().includes(search.toLowerCase()),
-      ),
-  );
+      );
+
+    const matchesTag = selectedTag
+      ? note.tags.some((tag) => tag.name === selectedTag)
+      : true;
+
+    return matchesSearch && matchesTag;
+  });
 
   return (
     <div className="min-h-screen bg-gray-950 px-4 py-10">
@@ -52,6 +63,25 @@ export default function NotesPage() {
         <div className="mb-6">
           <SearchBar value={search} onChange={setSearch} />
         </div>
+
+        {/* tags */}
+
+        {selectedTag && (
+          <div className="mb-4 flex items-center gap-2">
+            <span className="text-sm text-white/40">Filtré par :</span>
+            <TagBadge
+              name={selectedTag}
+              active
+              onClick={() => setSelectedTag(null)}
+            />
+            <span
+              className="text-xs text-white/30 cursor-pointer hover:text-white/60"
+              onClick={() => setSelectedTag(null)}
+            >
+              ✕ effacer
+            </span>
+          </div>
+        )}
 
         {/* Notes */}
         {isLoading ? (

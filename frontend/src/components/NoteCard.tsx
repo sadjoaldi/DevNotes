@@ -4,9 +4,10 @@ import TagBadge from "./TagBadge";
 type NoteCardProps = {
   note: Note;
   onClick: (id: string) => void;
+  onTagClick?: (tag: string) => void;
 };
 
-export default function NoteCard({ note, onClick }: NoteCardProps) {
+export default function NoteCard({ note, onClick, onTagClick }: NoteCardProps) {
   const preview =
     note.content.length > 120
       ? note.content.slice(0, 120) + "..."
@@ -29,7 +30,18 @@ export default function NoteCard({ note, onClick }: NoteCardProps) {
       <p className="mt-2 text-sm text-white/50 leading-relaxed">{preview}</p>
       <div className="flex flex-wrap gap-2">
         {note.tags.map((tag) => (
-          <TagBadge key={tag.id} name={tag.name} />
+          <TagBadge
+            key={tag.id}
+            name={tag.name}
+            onClick={
+              onTagClick
+                ? (e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    onTagClick(tag.name);
+                  }
+                : undefined
+            }
+          />
         ))}
         <span className="text-xs text-white/30">{date}</span>
       </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { notesApi } from "../api/notes";
 import NoteForm from "../components/NoteForm";
+import { useToast } from "../context/ToastContext";
 import type { CreateNoteInput, Note } from "../types";
 
 export default function EditNotePage() {
@@ -10,6 +11,7 @@ export default function EditNotePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -21,7 +23,7 @@ export default function EditNotePage() {
         const data = await notesApi.getById(id);
         setNote(data);
       } catch (error) {
-        console.error(error);
+        showToast("Erreur lors du chargement de la note", "error");
         navigate("/");
       } finally {
         setIsLoading(false);
@@ -44,13 +46,15 @@ export default function EditNotePage() {
     try {
       if (isEditMode) {
         await notesApi.update(id, input);
+        showToast("Note mise à jour avec succès.", "success");
         navigate(`/notes/${id}`);
       } else {
         const note = await notesApi.create(input);
+        showToast("Note créée avec succès.", "success");
         navigate(`/notes/${note.id}`);
       }
     } catch (error) {
-      console.error(error);
+      showToast("Erreur lors de la création de la note", "error");
     } finally {
       setIsSubmitting(false);
     }
