@@ -12,17 +12,59 @@ datasource db {
   provider = "sqlite"
 }
 
-model Note {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  tags      Tag[]    @relation("NoteTags")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model BugReport {
+  id           String       @id @default(cuid())
+  title        String
+  description  String
+  cause        String
+  solution     String
+  snippet      String?
+  category     Category     @default(OTHER)
+  status       Status       @default(OPEN)
+  severity     Severity     @default(MEDIUM)
+  isFavorite   Boolean      @default(false)
+  resolvedAt   DateTime?
+  tags         Tag[]        @relation("BugReportTags")
+  technologies Technology[] @relation("BugReportTechnologies")
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 }
 
 model Tag {
-  id    String @id @default(cuid())
-  name  String @unique
-  notes Note[] @relation("NoteTags")
+  id         String      @id @default(cuid())
+  name       String      @unique
+  bugReports BugReport[] @relation("BugReportTags")
+}
+
+model Technology {
+  id         String      @id @default(cuid())
+  name       String      @unique
+  bugReports BugReport[] @relation("BugReportTechnologies")
+}
+
+enum Status {
+  OPEN
+  RESOLVED
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum Category {
+  UI
+  BACKEND
+  DATABASE
+  API
+  PERFORMANCE
+  SECURITY
+  OTHER
+  FRONTEND
+  AUTHENTICATION
+  DEPLOYMENT
+  DEVOPS
+  TESTING
 }
