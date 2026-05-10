@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { notesApi } from "../api/notes";
+import { notesApi } from "../api/bugReports";
 import NoteCard from "../components/NoteCard";
 import SearchBar from "../components/SearchBar";
 import TagBadge from "../components/TagBadge";

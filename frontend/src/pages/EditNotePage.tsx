@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { notesApi } from "../api/notes";
+import { notesApi } from "../api/bugReports";
 import NoteForm from "../components/NoteForm";
 import { useToast } from "../context/ToastContext";
 import type { CreateNoteInput, Note } from "../types";
