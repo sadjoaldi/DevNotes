@@ -10,6 +10,32 @@ type Props = {
   onTechClick?: (tech: string) => void;
 };
 
+const statusConfig = {
+  OPEN: {
+    label: "Ouvert",
+    className: "bg-orange-500/20 border-orange-500/30 text-orange-300",
+  },
+  RESOLVED: {
+    label: "Résolu",
+    className: "bg-emerald-500/20 border-emerald-500/30 text-emerald-300",
+  },
+};
+
+const categoryConfig: Record<string, string> = {
+  UI: "🎨",
+  BACKEND: "⚙️",
+  DATABASE: "🗄️",
+  API: "🔌",
+  PERFORMANCE: "⚡",
+  SECURITY: "🔒",
+  OTHER: "📝",
+  FRONTEND: "🖥️",
+  AUTHENTICATION: "🔑",
+  DEPLOYMENT: "🚀",
+  DEVOPS: "🛠️",
+  TESTING: "🧪",
+};
+
 export default function BugReportCard({
   bugReport,
   onClick,
@@ -17,8 +43,8 @@ export default function BugReportCard({
   onTechClick,
 }: Props) {
   const preview =
-    bugReport.description.length > 100
-      ? bugReport.description.slice(0, 100) + "..."
+    bugReport.description.length > 120
+      ? bugReport.description.slice(0, 120) + "..."
       : bugReport.description;
 
   const date = new Date(bugReport.updatedAt).toLocaleDateString("fr-FR", {
@@ -27,39 +53,44 @@ export default function BugReportCard({
     year: "numeric",
   });
 
+  const { label, className } = statusConfig[bugReport.status];
+
   return (
     <div
       onClick={() => onClick(bugReport.id)}
-      className="cursor-pointer rounded-xl border border-white/10 bg-white/5 p-5 hover:border-white/20 hover:bg-white/10 transition-all duration-200"
+      className="group cursor-pointer rounded-2xl border border-white/8 bg-white/3 p-5 hover:border-indigo-500/30 hover:bg-white/6 transition-all duration-200"
     >
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <h2 className="text-base font-semibold text-white truncate">
-          {bugReport.title}
-        </h2>
+      {/* Top row */}
+      <div className="flex items-start justify-between gap-4 mb-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-lg shrink-0">
+            {categoryConfig[bugReport.category] ?? "📝"}
+          </span>
+          <h2 className="text-base font-semibold text-white truncate group-hover:text-indigo-300 transition-colors">
+            {bugReport.title}
+          </h2>
+        </div>
         <div className="flex items-center gap-2 shrink-0">
           {bugReport.isFavorite && (
             <span className="text-yellow-400 text-sm">★</span>
           )}
           <span
-            className={`rounded-full px-2.5 py-0.5 text-xs font-medium border ${
-              bugReport.status === "RESOLVED"
-                ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300"
-                : "bg-orange-500/20 border-orange-500/30 text-orange-300"
-            }`}
+            className={`rounded-full px-2.5 py-0.5 text-xs font-medium border ${className}`}
           >
-            {bugReport.status === "RESOLVED" ? "Résolu" : "Ouvert"}
+            {label}
           </span>
           <SeverityBadge severity={bugReport.severity} />
         </div>
       </div>
 
       {/* Description */}
-      <p className="mt-2 text-sm text-white/50 leading-relaxed">{preview}</p>
+      <p className="text-sm text-white/50 leading-relaxed mb-4 text-left">
+        {preview}
+      </p>
 
-      {/* Footer */}
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap gap-2">
+      {/* Bottom row */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex flex-wrap pt-2 gap-3 items-center">
           {bugReport.tags.map((tag) => (
             <TagBadge
               key={tag.id}
@@ -89,7 +120,7 @@ export default function BugReportCard({
             />
           ))}
         </div>
-        <span className="text-xs text-white/30">{date}</span>
+        <span className="text-xs text-white/25 shrink-0">{date}</span>
       </div>
     </div>
   );

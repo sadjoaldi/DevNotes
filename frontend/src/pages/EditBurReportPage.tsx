@@ -64,17 +64,17 @@ export default function EditBugReportPage() {
   const isEditMode = !!id && !!bugReport;
 
   return (
-    <div className="min-h-screen bg-gray-950 px-4 py-10">
-      <div className="mx-auto max-w-3xl">
+    <div className="min-h-screen bg-gray-950 px-4 py-1">
+      <div className="mx-auto ">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between">
           <button
             onClick={() => navigate(isEditMode ? `/bug-reports/${id}` : "/")}
             className="text-sm text-white/40 hover:text-white transition-colors"
           >
             ← Retour
           </button>
-          <h1 className="text-lg font-semibold text-white">
+          <h1 className="text-base font-semibold text-white">
             {isEditMode ? "Modifier le rapport" : "Nouveau rapport"}
           </h1>
         </div>

@@ -7,6 +7,7 @@ import type {
   Severity,
   Status,
 } from "../types";
+import Select from "./Select";
 import TagBadge from "./TagBadge";
 import TechBadge from "./TechBadge";
 
@@ -27,23 +28,32 @@ type Props = {
   isLoading?: boolean;
 };
 
-const CATEGORIES: Category[] = [
-  "UI",
-  "BACKEND",
-  "DATABASE",
-  "API",
-  "PERFORMANCE",
-  "SECURITY",
-  "OTHER",
-  "FRONTEND",
-  "AUTHENTICATION",
-  "DEPLOYMENT",
-  "DEVOPS",
-  "TESTING",
-];
+const CATEGORY_OPTIONS = [
+  { value: "UI", label: "🎨 UI" },
+  { value: "FRONTEND", label: "🖥️ Frontend" },
+  { value: "BACKEND", label: "⚙️ Backend" },
+  { value: "DATABASE", label: "🗄️ Database" },
+  { value: "API", label: "🔌 API" },
+  { value: "PERFORMANCE", label: "⚡ Performance" },
+  { value: "SECURITY", label: "🔒 Security" },
+  { value: "AUTHENTICATION", label: "🔑 Authentication" },
+  { value: "DEPLOYMENT", label: "🚀 Deployment" },
+  { value: "DEVOPS", label: "🛠️ DevOps" },
+  { value: "TESTING", label: "🧪 Testing" },
+  { value: "OTHER", label: "📝 Other" },
+] as const;
 
-const SEVERITIES: Severity[] = ["LOW", "MEDIUM", "HIGH", "CRITICAL"];
-const STATUSES: Status[] = ["OPEN", "RESOLVED"];
+const SEVERITY_OPTIONS = [
+  { value: "LOW", label: "🔵 Low" },
+  { value: "MEDIUM", label: "🟡 Medium" },
+  { value: "HIGH", label: "🟠 High" },
+  { value: "CRITICAL", label: "🔴 Critical" },
+] as const;
+
+const STATUS_OPTIONS = [
+  { value: "OPEN", label: "🟠 Ouvert" },
+  { value: "RESOLVED", label: "🟢 Résolu" },
+] as const;
 
 export default function BugReportForm({
   initialValues,
@@ -71,7 +81,6 @@ export default function BugReportForm({
   const [tagInput, setTagInput] = useState("");
   const [techInput, setTechInput] = useState("");
   const [showPreview, setShowPreview] = useState(false);
-
   const snippetRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -84,17 +93,14 @@ export default function BugReportForm({
 
   const handleAddTag = () => {
     const trimmed = tagInput.trim().toLowerCase();
-    if (trimmed && !tags.includes(trimmed)) {
-      setTags([...tags, trimmed]);
-    }
+    if (trimmed && !tags.includes(trimmed)) setTags([...tags, trimmed]);
     setTagInput("");
   };
 
   const handleAddTech = () => {
     const trimmed = techInput.trim().toLowerCase();
-    if (trimmed && !technologies.includes(trimmed)) {
+    if (trimmed && !technologies.includes(trimmed))
       setTechnologies([...technologies, trimmed]);
-    }
     setTechInput("");
   };
 
@@ -122,52 +128,59 @@ export default function BugReportForm({
   };
 
   const inputClass =
-    "rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all duration-200";
-  const selectClass =
-    "rounded-xl border border-white/10 bg-gray-900 px-4 py-3 text-sm text-white outline-none focus:border-indigo-500/50 transition-all duration-200";
-  const labelClass = "text-sm font-medium text-white/60";
+    "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all duration-200";
+  const labelClass = "text-sm  font-medium text-white/60";
+  const sectionClass = "flex flex-col gap-2";
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {/* Title */}
-      <div className="flex flex-col gap-2">
-        <label className={labelClass}>Titre</label>
+      <div className={sectionClass}>
+        <label className={labelClass}>
+          Titre <span className="text-red-400">*</span>
+        </label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Titre du bug..."
+          placeholder="Ex: TypeError: Cannot read properties of undefined"
           className={inputClass}
         />
       </div>
 
       {/* Description */}
-      <div className="flex flex-col gap-2">
-        <label className={labelClass}>Description</label>
+      <div className={sectionClass}>
+        <label className={labelClass}>
+          Description <span className="text-red-400">*</span>
+        </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Décris le bug..."
+          placeholder="Décris le comportement observé..."
           rows={3}
           className={`${inputClass} resize-none`}
         />
       </div>
 
       {/* Cause */}
-      <div className="flex flex-col gap-2">
-        <label className={labelClass}>Cause</label>
+      <div className={sectionClass}>
+        <label className={labelClass}>
+          Cause <span className="text-red-400">*</span>
+        </label>
         <textarea
           value={cause}
           onChange={(e) => setCause(e.target.value)}
-          placeholder="Quelle était la cause ?"
+          placeholder="Quelle était la cause racine ?"
           rows={3}
           className={`${inputClass} resize-none`}
         />
       </div>
 
       {/* Solution */}
-      <div className="flex flex-col gap-2">
-        <label className={labelClass}>Solution</label>
+      <div className={sectionClass}>
+        <label className={labelClass}>
+          Solution <span className="text-red-400">*</span>
+        </label>
         <textarea
           value={solution}
           onChange={(e) => setSolution(e.target.value)}
@@ -178,7 +191,7 @@ export default function BugReportForm({
       </div>
 
       {/* Snippet */}
-      <div className="flex flex-col gap-2">
+      <div className={sectionClass}>
         <div className="flex items-center justify-between">
           <label className={labelClass}>Snippet</label>
           {snippet && (
@@ -187,7 +200,7 @@ export default function BugReportForm({
               onClick={() => setShowPreview(!showPreview)}
               className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
             >
-              {showPreview ? "Éditer" : "Prévisualiser"}
+              {showPreview ? "✎ Éditer" : "👁 Prévisualiser"}
             </button>
           )}
         </div>
@@ -209,53 +222,35 @@ export default function BugReportForm({
       </div>
 
       {/* Category / Severity / Status */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="flex flex-col gap-2">
-          <label className={labelClass}>Catégorie</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value as Category)}
-            className={selectClass}
-          >
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className={labelClass}>Sévérité</label>
-          <select
-            value={severity}
-            onChange={(e) => setSeverity(e.target.value as Severity)}
-            className={selectClass}
-          >
-            {SEVERITIES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className={labelClass}>Statut</label>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as Status)}
-            className={selectClass}
-          >
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="grid grid-cols-3 gap-4">
+        <Select
+          label="Catégorie"
+          value={category}
+          onChange={setCategory}
+          options={
+            CATEGORY_OPTIONS as unknown as { value: Category; label: string }[]
+          }
+        />
+        <Select
+          label="Sévérité"
+          value={severity}
+          onChange={setSeverity}
+          options={
+            SEVERITY_OPTIONS as unknown as { value: Severity; label: string }[]
+          }
+        />
+        <Select
+          label="Statut"
+          value={status}
+          onChange={setStatus}
+          options={
+            STATUS_OPTIONS as unknown as { value: Status; label: string }[]
+          }
+        />
       </div>
 
       {/* Tags */}
-      <div className="flex flex-col gap-2">
+      <div className={sectionClass}>
         <label className={labelClass}>Tags</label>
         <div className="flex gap-2">
           <input
@@ -269,12 +264,12 @@ export default function BugReportForm({
               }
             }}
             placeholder="Ajouter un tag..."
-            className={`flex-1 ${inputClass}`}
+            className={inputClass}
           />
           <button
             type="button"
             onClick={handleAddTag}
-            className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60 hover:bg-white/10 hover:text-white transition-all duration-200"
+            className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60 hover:bg-white/10 hover:text-white transition-all duration-200 shrink-0"
           >
             Ajouter
           </button>
@@ -298,7 +293,7 @@ export default function BugReportForm({
       </div>
 
       {/* Technologies */}
-      <div className="flex flex-col gap-2">
+      <div className={sectionClass}>
         <label className={labelClass}>Technologies</label>
         <div className="flex gap-2">
           <input
@@ -312,12 +307,12 @@ export default function BugReportForm({
               }
             }}
             placeholder="Ajouter une techno..."
-            className={`flex-1 ${inputClass}`}
+            className={inputClass}
           />
           <button
             type="button"
             onClick={handleAddTech}
-            className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60 hover:bg-white/10 hover:text-white transition-all duration-200"
+            className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60 hover:bg-white/10 hover:text-white transition-all duration-200 shrink-0"
           >
             Ajouter
           </button>

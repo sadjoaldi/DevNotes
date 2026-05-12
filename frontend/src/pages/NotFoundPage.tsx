@@ -11,10 +11,10 @@ export default function NotFoundPage() {
         Cette page n'existe pas ou a été déplacée.
       </p>
       <button
-        onClick={() => navigate("/notes")}
-        className="mt-4 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 transition-all duration-200"
+        onClick={() => navigate("/bug-reports")}
+        className="mt-4 cursor-pointer rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 transition-all duration-200"
       >
-        Retour aux notes
+        Retour aux BugLogs
       </button>
     </div>
   );
