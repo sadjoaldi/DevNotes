@@ -40,6 +40,7 @@ export type BugReport = {
   technologies: Technology[];
   createdAt: string;
   updatedAt: string;
+  duration?: string;
 };
 
 export type CreateBugReportInput = {
@@ -54,6 +55,7 @@ export type CreateBugReportInput = {
   isFavorite?: boolean;
   tags?: string[];
   technologies?: string[];
+  duration?: string;
 };
 
 export type UpdateBugReportInput = Partial<CreateBugReportInput>;

@@ -173,6 +173,12 @@ export default function BugReportDetailPage() {
           {bugReport.title}
         </h1>
         <p className="text-xs text-white/30">Modifié le {date}</p>
+
+        {bugReport.duration && (
+          <p className="text-xs text-white/30 mt-1">
+            ⏱ Résolu en {bugReport.duration}
+          </p>
+        )}
       </div>
 
       {/* Tags & Technologies */}

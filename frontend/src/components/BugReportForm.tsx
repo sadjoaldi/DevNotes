@@ -23,6 +23,7 @@ type Props = {
     status?: Status;
     tags: string[];
     technologies: string[];
+    duration?: string;
   };
   onSubmit: (input: CreateBugReportInput) => void;
   isLoading?: boolean;
@@ -82,6 +83,7 @@ export default function BugReportForm({
   const [techInput, setTechInput] = useState("");
   const [showPreview, setShowPreview] = useState(false);
   const snippetRef = useRef<HTMLElement>(null);
+  const [duration, setDuration] = useState(initialValues?.duration ?? " ");
 
   useEffect(() => {
     if (showPreview && snippetRef.current && snippet) {
@@ -92,15 +94,20 @@ export default function BugReportForm({
   }, [showPreview, snippet]);
 
   const handleAddTag = () => {
-    const trimmed = tagInput.trim().toLowerCase();
-    if (trimmed && !tags.includes(trimmed)) setTags([...tags, trimmed]);
+    const newTags = tagInput
+      .split(",")
+      .map((t) => t.trim().toLowerCase())
+      .filter((t) => t && !tags.includes(t));
+    if (newTags.length > 0) setTags([...tags, ...newTags]);
     setTagInput("");
   };
 
   const handleAddTech = () => {
-    const trimmed = techInput.trim().toLowerCase();
-    if (trimmed && !technologies.includes(trimmed))
-      setTechnologies([...technologies, trimmed]);
+    const newTechs = techInput
+      .split(",")
+      .map((t) => t.trim().toLowerCase())
+      .filter((t) => t && !technologies.includes(t));
+    if (newTechs.length > 0) setTechnologies([...technologies, ...newTechs]);
     setTechInput("");
   };
 
@@ -124,6 +131,7 @@ export default function BugReportForm({
       status,
       tags,
       technologies,
+      duration,
     });
   };
 
@@ -187,6 +195,18 @@ export default function BugReportForm({
           placeholder="Comment l'as-tu résolu ?"
           rows={3}
           className={`${inputClass} resize-none`}
+        />
+      </div>
+
+      {/* Duration */}
+      <div className={sectionClass}>
+        <label className={labelClass}>Durée de résolution</label>
+        <input
+          type="text"
+          value={duration}
+          onChange={(e) => setDuration(e.target.value)}
+          placeholder="Ex: 2h30, 45min, 3 jours..."
+          className={inputClass}
         />
       </div>
 

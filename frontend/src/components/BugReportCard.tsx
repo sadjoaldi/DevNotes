@@ -121,6 +121,14 @@ export default function BugReportCard({
           ))}
         </div>
         <span className="text-xs text-white/25 shrink-0">{date}</span>
+        <div className="flex items-center gap-3">
+          {bugReport.duration && (
+            <span className="text-xs text-white/25">
+              ⏱ {bugReport.duration}
+            </span>
+          )}
+          <span className="text-xs text-white/25 shrink-0">{date}</span>
+        </div>
       </div>
     </div>
   );

@@ -93,6 +93,7 @@ export default function EditBugReportPage() {
                   status: bugReport.status,
                   tags: bugReport.tags.map((t) => t.name),
                   technologies: bugReport.technologies.map((t) => t.name),
+                  duration: bugReport.duration,
                 }
               : undefined
           }
