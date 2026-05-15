@@ -1,0 +1,12 @@
+{
+  "name": "buglog",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm --filter backend dev\" \"pnpm --filter frontend dev\"",
+    "build": "concurrently \"pnpm --filter backend build\" \"pnpm --filter frontend build\"",
+    "install:all": "pnpm --filter backend install && pnpm --filter frontend install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}

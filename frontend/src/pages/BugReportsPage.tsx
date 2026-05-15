@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import SkeletonCard from "@/components/SkeletonCard";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -127,14 +128,10 @@ export default function BugReportsPage() {
 
       {/* Bug reports */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <motion.p
-            animate={{ opacity: [0.3, 1, 0.3] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            className="text-white/30 text-sm"
-          >
-            Chargement...
-          </motion.p>
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       ) : filtered.length === 0 ? (
         <motion.div
