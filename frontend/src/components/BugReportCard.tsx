@@ -121,8 +121,7 @@ export default function BugReportCard({
               name={tech.name}
               onClick={
                 onTechClick
-                  ? (e: React.MouseEvent) => {
-                      e.stopPropagation();
+                  ? () => {
                       onTechClick(tech.name);
                     }
                   : undefined
