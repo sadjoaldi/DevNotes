@@ -7,7 +7,7 @@ RUN npm install -g pnpm
 # Dependencies
 FROM base AS deps 
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts 
 
 # Builder
 FROM base AS builder
