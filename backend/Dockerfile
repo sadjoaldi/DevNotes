@@ -10,15 +10,17 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # Builder
-FROM base as BUILDER
+FROM base as builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ENV DATABASE_URL="file:./dev.db"
 RUN pnpm dlx prisma generate
 RUN pnpm build
 
 # Runner
 FROM base AS runner
 ENV NODE_ENV=production
+ENV DATABASE_URL="file:./data/prod.db"
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
@@ -27,4 +29,4 @@ COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3000
 
-CMD [ "node", "dist/server.js" ]
+CMD ["sh", "-c", "node -e \"require('child_process').execSync('npx prisma migrate deploy', {stdio: 'inherit'})\" && node dist/server.js"]
