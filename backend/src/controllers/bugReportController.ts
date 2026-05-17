@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import type { Category, Severity, Status } from "../../generated/prisma";
+import { createBugReportSchema, updateBugReportSchema } from "../lib/validators";
 import { bugReportService } from "../services/bugReportService";
 
 export const bugReportController = {
@@ -45,43 +46,16 @@ export const bugReportController = {
   // POST /api/v1/bug-reports
   async create(req: Request, res: Response) {
     try {
-      const {
-        title,
-        description,
-        cause,
-        solution,
-        snippet,
-        category,
-        status,
-        severity,
-        isFavorite,
-        tags,
-        technologies,
-        duration,
-      } = req.body;
-
-      if (!title || !description || !cause || !solution) {
+      const parsed = createBugReportSchema.safeParse(req.body);
+      if (!parsed.success) {
         res.status(400).json({
-          error: "Title, description, cause and solution are required",
+          error: "Données invalides",
+          details: parsed.error.flatten().fieldErrors,
         });
         return;
       }
 
-      const bugReport = await bugReportService.createBugReport({
-        title,
-        description,
-        cause,
-        solution,
-        snippet,
-        category,
-        status,
-        severity,
-        isFavorite,
-        tags,
-        technologies,
-        duration,
-      });
-
+      const bugReport = await bugReportService.createBugReport(parsed.data);
       res.status(201).json(bugReport);
       return;
     } catch (error) {
@@ -94,54 +68,21 @@ export const bugReportController = {
   // PATCH /api/v1/bug-reports/:id
   async update(req: Request<{ id: string }>, res: Response) {
     try {
-      const {
-        title,
-        description,
-        cause,
-        solution,
-        snippet,
-        category,
-        status,
-        severity,
-        isFavorite,
-        tags,
-        technologies,
-        duration,
-      } = req.body;
+      const parsed = updateBugReportSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: "Données invalides",
+          details: parsed.error.flatten().fieldErrors,
+        });
+        return;
+      }
 
-      if (
-        !title &&
-        !description &&
-        !cause &&
-        !solution &&
-        !snippet &&
-        !category &&
-        !status &&
-        !severity &&
-        isFavorite === undefined &&
-        !tags &&
-        !technologies &&
-        !duration
-      ) {
+      if (Object.keys(parsed.data).length === 0) {
         res.status(400).json({ error: "Nothing to update" });
         return;
       }
 
-      const bugReport = await bugReportService.updateBugReport(req.params.id, {
-        title,
-        description,
-        cause,
-        solution,
-        snippet,
-        category,
-        status,
-        severity,
-        isFavorite,
-        tags,
-        technologies,
-        duration,
-      });
-
+      const bugReport = await bugReportService.updateBugReport(req.params.id, parsed.data);
       res.json(bugReport);
       return;
     } catch (error) {
